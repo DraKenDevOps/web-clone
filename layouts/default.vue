@@ -1,26 +1,35 @@
 <template>
     <v-app>
-        <v-navigation-drawer v-model="sidebar.value" app location="right">
-            <v-list>
-                <v-list-tile v-for="(item, idx) in menuItems" :key="idx" :to="item.path">
-                    <v-list-tile-content>{{ item.title }}</v-list-tile-content>
-                </v-list-tile>
+        <v-navigation-drawer v-model="drawer" temporary location="right" width="400">
+            <v-list density="compact">
+                <v-list-item v-for="(item, idx) in menuItems" :key="idx" :to="item.path" active-color="primary">
+                    <v-list-item-title> {{ item.title }}</v-list-item-title>
+                </v-list-item>
+                <v-list-item>
+                    <v-btn prepend-icon="mdi-translate" @click="switchLang()" variant="tonal" rounded="xl">{{
+                        lang
+                    }}</v-btn>
+                </v-list-item>
             </v-list>
+            <div class="close-box">
+                <v-btn class="mx-auto" icon="mdi-close" variant="text" @click="drawer = !drawer"></v-btn>
+            </div>
         </v-navigation-drawer>
 
-        <v-toolbar app class="bg-white b-shadow">
+        <!-- TODO: make nav or toolbar or appbar to fixed top -->
+        <v-toolbar fixed class="bg-white b-shadow">
             <v-toolbar-title>
-                <router-link to="/" tag="span" style="cursor: pointer">
+                <nuxt-link to="/" style="cursor: pointer">
                     <aside class="navbar-evisa-logo">
                         <div class="e-logo"></div>
                     </aside>
-                </router-link>
+                </nuxt-link>
             </v-toolbar-title>
-            <v-toolbar-items class="hidden-sm-only align-items-center">
-                <v-btn flat to="/" variant="text" class="mx-2 h-75"> Home </v-btn>
+            <v-toolbar-items class="hidable align-items-center">
+                <v-btn flat to="/" variant="text" class="mx-2"> Home </v-btn>
                 <v-menu open-on-hover>
                     <template v-slot:activator="{ props }">
-                        <v-btn color="primary" v-bind="props" class="h-75"> Apply </v-btn>
+                        <v-btn color="primary" v-bind="props"> Apply </v-btn>
                     </template>
                     <v-list>
                         <v-list-item to="/apply">
@@ -37,15 +46,26 @@
                     :key="idx"
                     :to="item.path"
                     variant="text"
-                    class="mx-2 h-75"
+                    class="mx-2"
+                    active-color="primary"
                 >
                     {{ item.title }}
                 </v-btn>
             </v-toolbar-items>
             <v-spacer></v-spacer>
-            <span class="hidden-sm-and-up">
-                <v-toolbar-side-icon @click="sidebar.value = !sidebar.value"> </v-toolbar-side-icon>
-            </span>
+            <div class="me-5">
+                <v-btn
+                    prepend-icon="mdi-translate"
+                    @click="switchLang()"
+                    class="hidable"
+                    rounded="xl"
+                    variant="tonal"
+                    >{{ lang }}</v-btn
+                >
+                <span class="menu-btn">
+                    <v-btn icon="mdi-menu" @click="drawer = !drawer"> </v-btn>
+                </span>
+            </div>
         </v-toolbar>
 
         <v-main>
@@ -56,7 +76,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-const sidebar = ref(false);
+const drawer = ref(false);
 const menuItems = [
     { title: 'eVisa Fee', path: '/fee' },
     { title: 'Information', path: '/info' },
@@ -64,6 +84,13 @@ const menuItems = [
     { title: 'About', path: '/about' },
     { title: 'Contact', path: '/contact' },
 ];
+
+const lang = ref<'en' | '中文'>('en');
+
+const switchLang = () => {
+    lang.value = lang.value === 'en' ? '中文' : 'en';
+    localStorage.setItem('language', lang.value);
+};
 </script>
 
 <style scoped>
@@ -106,7 +133,25 @@ const menuItems = [
     }
 }
 
+@media (max-width: 900px) {
+    .hidable {
+        display: none;
+    }
+}
+
+@media (min-width: 900px) {
+    .menu-btn {
+        display: none;
+    }
+}
+
 .b-shadow {
     box-shadow: 0 4px 2px -2px #eeeeee;
+}
+
+.close-box {
+    bottom: 0;
+    display: block;
+    position: absolute;
 }
 </style>

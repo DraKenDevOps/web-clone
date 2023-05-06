@@ -5,7 +5,8 @@ export default defineNuxtConfig({
     css: [
         'assets/css/global.css',
         'vuetify/lib/styles/main.css',
-        /*'@mdi/font/css/materialdesignicons.min.css',*/ 'ant-design-vue/dist/antd.css',
+        '@mdi/font/css/materialdesignicons.min.css',
+        'ant-design-vue/dist/antd.css',
     ],
     build: {
         transpile: ['vuetify'],
